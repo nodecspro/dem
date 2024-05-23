@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.Pane?>
+
+<BorderPane prefHeight="391.0" prefWidth="518.0"
+	xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+	fx:controller="application.CreateRequestFormController">
+	<center>
+		<Pane prefHeight="200.0" prefWidth="200.0"
+			BorderPane.alignment="CENTER">
+			<children>
+				<Button fx:id="createRequestButton" layoutX="197.0"
+					layoutY="303.0" mnemonicParsing="false"
+					onMouseClicked="#createRequestButtonOnClick" text="Создать заявку" />
+				<TextField fx:id="fullNameClientTextField" layoutX="34.0"
+					layoutY="64.0" promptText="Иванов Иван Иванович" />
+				<Label layoutX="62.0" layoutY="96.0" text="Номер телефона" />
+				<TextField fx:id="phoneNumberClientTextField"
+					layoutX="34.0" layoutY="113.0" promptText="81234567890" />
+				<Label layoutX="71.0" layoutY="47.0" text="ФИО клиента" />
+				<ComboBox fx:id="equipmentsTypeComboBox" layoutX="320.0"
+					layoutY="64.0" prefWidth="150.0" promptText="Выберите тип" />
+				<Label layoutX="343.0" layoutY="47.0" text="Тип оборудования" />
+				<TextField fx:id="equipmentsModelTextField"
+					layoutX="320.0" layoutY="113.0" promptText="HP LaserJet" />
+				<Label layoutX="331.0" layoutY="96.0"
+					text="Модель оборудования" />
+				<TextArea fx:id="problemTextArea" layoutX="156.0"
+					layoutY="177.0" prefHeight="105.0" prefWidth="182.0"
+					promptText="Принтер не печатает" />
+				<Label layoutX="189.0" layoutY="160.0"
+					text="Описание проблемы" />
+			</children>
+		</Pane>
+	</center>
+</BorderPane>
