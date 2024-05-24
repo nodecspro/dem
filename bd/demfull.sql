@@ -1,6 +1,6 @@
 -- MySQL dump 10.13  Distrib 8.0.26, for Win64 (x86_64)
 --
--- Host: 127.0.0.1    Database: dem
+-- Host: 127.0.0.1    Database: 24m115
 -- ------------------------------------------------------
 -- Server version	8.0.30
 
@@ -16,170 +16,149 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `clients`
+-- Table structure for table `Clients`
 --
 
-DROP TABLE IF EXISTS `clients`;
+DROP TABLE IF EXISTS `Clients`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `clients` (
-  `client_id` int NOT NULL AUTO_INCREMENT,
-  `client_name` varchar(100) NOT NULL,
-  `phone_number` varchar(20) NOT NULL,
-  PRIMARY KEY (`client_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+CREATE TABLE `Clients` (
+  `clientID` int NOT NULL AUTO_INCREMENT,
+  `userID` int DEFAULT NULL,
+  PRIMARY KEY (`clientID`),
+  KEY `userID` (`userID`),
+  CONSTRAINT `clients_ibfk_1` FOREIGN KEY (`userID`) REFERENCES `Users` (`userID`)
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `clients`
+-- Dumping data for table `Clients`
 --
 
-LOCK TABLES `clients` WRITE;
-/*!40000 ALTER TABLE `clients` DISABLE KEYS */;
-INSERT INTO `clients` VALUES (1,'Иван Иванов','123-456-7890'),(2,'Мария Петрова','098-765-4321'),(5,'Яковлев Борис Николаевич','81234567890'),(6,'Коренко Дмитрий Николаевич','81234567890'),(7,'Козлов Андрей Александрович','80987654321'),(8,'asdasda','sadasdasd'),(9,'assdasd','asdasd'),(10,'we1ee','asdawdas'),(11,'afasfa','sfafaf'),(12,'111111111','11111111'),(13,'ddddddd','124124124'),(14,'aaaaaa','aaaaa'),(15,'asdasda','12412412412'),(16,'asdassda','12412412412');
-/*!40000 ALTER TABLE `clients` ENABLE KEYS */;
+LOCK TABLES `Clients` WRITE;
+/*!40000 ALTER TABLE `Clients` DISABLE KEYS */;
+INSERT INTO `Clients` VALUES (1,1),(2,2),(3,3),(4,4),(5,5),(6,6),(7,7),(8,8),(9,9);
+/*!40000 ALTER TABLE `Clients` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
--- Table structure for table `equipment_models`
+-- Table structure for table `Comments`
 --
 
-DROP TABLE IF EXISTS `equipment_models`;
+DROP TABLE IF EXISTS `Comments`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `equipment_models` (
-  `model_id` int NOT NULL AUTO_INCREMENT,
-  `model_name` varchar(100) NOT NULL,
-  `equipment_type_id` int NOT NULL,
-  PRIMARY KEY (`model_id`),
-  KEY `equipment_type_id` (`equipment_type_id`),
-  CONSTRAINT `equipment_models_ibfk_1` FOREIGN KEY (`equipment_type_id`) REFERENCES `equipment_types` (`equipment_type_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+CREATE TABLE `Comments` (
+  `commentID` int NOT NULL AUTO_INCREMENT,
+  `message` varchar(255) DEFAULT NULL,
+  `masterID` int DEFAULT NULL,
+  `requestID` int DEFAULT NULL,
+  PRIMARY KEY (`commentID`),
+  KEY `masterID` (`masterID`),
+  KEY `requestID` (`requestID`),
+  CONSTRAINT `comments_ibfk_1` FOREIGN KEY (`masterID`) REFERENCES `Masters` (`masterID`),
+  CONSTRAINT `comments_ibfk_2` FOREIGN KEY (`requestID`) REFERENCES `Requests` (`requestID`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `equipment_models`
+-- Dumping data for table `Comments`
 --
 
-LOCK TABLES `equipment_models` WRITE;
-/*!40000 ALTER TABLE `equipment_models` DISABLE KEYS */;
-INSERT INTO `equipment_models` VALUES (1,'Dell Inspiron',1),(2,'HP LaserJet',2),(3,'Canon Lide',3),(7,'Acer Aspire e5',8),(8,'Acer Aspire e5',8),(9,'iphone 12',10),(10,'assdasdad',2),(11,'dadsdasd',3),(12,'dasdasd',3),(13,'asf',3),(14,'11111',2),(15,'ddasd',2),(16,'aaaaa',2),(17,'sdasdasd',2),(18,'asadasdasd',1);
-/*!40000 ALTER TABLE `equipment_models` ENABLE KEYS */;
+LOCK TABLES `Comments` WRITE;
+/*!40000 ALTER TABLE `Comments` DISABLE KEYS */;
+INSERT INTO `Comments` VALUES (1,'Всё сделаем!',2,1),(2,'Не переживайте, починим.',3,2),(3,'Не переживайте, починим.',3,3);
+/*!40000 ALTER TABLE `Comments` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
--- Table structure for table `equipment_types`
+-- Table structure for table `Masters`
 --
 
-DROP TABLE IF EXISTS `equipment_types`;
+DROP TABLE IF EXISTS `Masters`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `equipment_types` (
-  `equipment_type_id` int NOT NULL AUTO_INCREMENT,
-  `type_name` varchar(100) NOT NULL,
-  PRIMARY KEY (`equipment_type_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+CREATE TABLE `Masters` (
+  `masterID` int NOT NULL AUTO_INCREMENT,
+  `userID` int DEFAULT NULL,
+  PRIMARY KEY (`masterID`),
+  KEY `userID` (`userID`),
+  CONSTRAINT `masters_ibfk_1` FOREIGN KEY (`userID`) REFERENCES `Users` (`userID`)
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `equipment_types`
+-- Dumping data for table `Masters`
 --
 
-LOCK TABLES `equipment_types` WRITE;
-/*!40000 ALTER TABLE `equipment_types` DISABLE KEYS */;
-INSERT INTO `equipment_types` VALUES (1,'Компьютер'),(2,'Принтер'),(3,'Сканер'),(7,'Монитор'),(8,'Ноутбук'),(9,'Сетевое оборудование'),(10,'Телефон'),(11,'Факс'),(12,'Проектор'),(13,'Копировальный аппарат'),(14,'МФУ (Многофункциональное устройство)'),(15,'Сервер'),(16,'ИБП (Источники бесперебойного питания)'),(17,'Плоттер'),(18,'Модем'),(19,'Маршрутизатор'),(20,'Коммутатор'),(21,'Периферийное устройство'),(22,'Программное обеспечение'),(23,'Хранение данных (NAS/SAN)');
-/*!40000 ALTER TABLE `equipment_types` ENABLE KEYS */;
+LOCK TABLES `Masters` WRITE;
+/*!40000 ALTER TABLE `Masters` DISABLE KEYS */;
+INSERT INTO `Masters` VALUES (2,2),(3,3),(10,10);
+/*!40000 ALTER TABLE `Masters` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
--- Table structure for table `requests`
+-- Table structure for table `Requests`
 --
 
-DROP TABLE IF EXISTS `requests`;
+DROP TABLE IF EXISTS `Requests`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `requests` (
-  `request_id` int NOT NULL AUTO_INCREMENT,
-  `date_added` date NOT NULL,
-  `model_id` int NOT NULL,
-  `problem_description` text NOT NULL,
-  `client_id` int NOT NULL,
-  `worker_id` int DEFAULT NULL,
-  `status` enum('Новая заявка','В процессе ремонта','Завершена') NOT NULL DEFAULT 'Новая заявка',
-  `comments` text,
-  `create_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-  `completion_time` varchar(50) DEFAULT NULL,
-  PRIMARY KEY (`request_id`),
-  UNIQUE KEY `request_id_UNIQUE` (`request_id`),
-  KEY `model_id` (`model_id`),
-  KEY `client_id` (`client_id`),
-  KEY `worker_id` (`worker_id`),
-  CONSTRAINT `requests_ibfk_1` FOREIGN KEY (`model_id`) REFERENCES `equipment_models` (`model_id`),
-  CONSTRAINT `requests_ibfk_2` FOREIGN KEY (`client_id`) REFERENCES `clients` (`client_id`),
-  CONSTRAINT `requests_ibfk_3` FOREIGN KEY (`worker_id`) REFERENCES `workers` (`worker_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `requests`
---
-
-LOCK TABLES `requests` WRITE;
-/*!40000 ALTER TABLE `requests` DISABLE KEYS */;
-INSERT INTO `requests` VALUES (1,'2024-05-22',1,'Не включается компьютер',1,1,'Завершена','Требуется замена блока питания','2024-05-22 13:46:35','19 часов'),(2,'2024-05-22',1,'Не включается',1,1,'Завершена','Требуется замена блока питания','2024-05-22 15:21:44','18 часов'),(3,'2024-05-23',8,'Не включается ноутбук.',6,2,'Новая заявка','null','2024-05-23 10:49:55',NULL),(4,'2024-05-23',9,'Тихий звук динамиков.',7,NULL,'Новая заявка',NULL,'2024-05-23 11:03:13',NULL);
-/*!40000 ALTER TABLE `requests` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `user`
---
-
-DROP TABLE IF EXISTS `user`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `user` (
-  `username` varchar(16) NOT NULL,
-  `password` varchar(32) NOT NULL,
-  `role` enum('Администратор','Пользователь') NOT NULL DEFAULT 'Пользователь',
-  `create_time` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`username`),
-  UNIQUE KEY `username_UNIQUE` (`username`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `user`
---
-
-LOCK TABLES `user` WRITE;
-/*!40000 ALTER TABLE `user` DISABLE KEYS */;
-INSERT INTO `user` VALUES ('admin','admin123','Администратор','2024-05-23 12:45:01'),('node','qwerty','Пользователь','2024-05-23 11:42:58');
-/*!40000 ALTER TABLE `user` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `workers`
---
-
-DROP TABLE IF EXISTS `workers`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `workers` (
-  `worker_id` int NOT NULL AUTO_INCREMENT,
-  `worker_name` varchar(100) NOT NULL,
-  `position` varchar(100) DEFAULT NULL,
-  PRIMARY KEY (`worker_id`)
+CREATE TABLE `Requests` (
+  `requestID` int NOT NULL AUTO_INCREMENT,
+  `startDate` date DEFAULT NULL,
+  `computerTechType` varchar(100) DEFAULT NULL,
+  `computerTechModel` varchar(100) DEFAULT NULL,
+  `problemDescription` varchar(255) DEFAULT NULL,
+  `requestStatus` varchar(50) DEFAULT 'Новая заявка',
+  `completionDate` date DEFAULT NULL,
+  `repairParts` varchar(255) DEFAULT NULL,
+  `masterID` int DEFAULT NULL,
+  `clientID` int DEFAULT NULL,
+  PRIMARY KEY (`requestID`),
+  KEY `masterID` (`masterID`),
+  KEY `clientID` (`clientID`),
+  CONSTRAINT `requests_ibfk_1` FOREIGN KEY (`masterID`) REFERENCES `Masters` (`masterID`),
+  CONSTRAINT `requests_ibfk_2` FOREIGN KEY (`clientID`) REFERENCES `Clients` (`clientID`)
 ) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `workers`
+-- Dumping data for table `Requests`
 --
 
-LOCK TABLES `workers` WRITE;
-/*!40000 ALTER TABLE `workers` DISABLE KEYS */;
-INSERT INTO `workers` VALUES (1,'Алексей Смирнов','Инженер'),(2,'Сергей Кузнецов','Техник'),(5,'Иван Иванов','Инженер'),(6,'Петр Петров','Техник'),(7,'Сергей Сергеев','Техник'),(8,'Алексей Алексеев','Техник');
-/*!40000 ALTER TABLE `workers` ENABLE KEYS */;
+LOCK TABLES `Requests` WRITE;
+/*!40000 ALTER TABLE `Requests` DISABLE KEYS */;
+INSERT INTO `Requests` VALUES (1,'2023-06-06','Компьютер','RDOR GAMING RAGE H290','Выключается после 10 минут работы','В процессе ремонта',NULL,NULL,2,7),(2,'2023-05-05','Ноутбук','ASUS VivoBook Pro 15 M6500QH-HN034 синий','Сильно шумит и греется','В процессе ремонта',NULL,NULL,3,8),(3,'2022-07-07','Мышка','ARDOR GAMING Phantom PRO','Перестало работать колёсико','Готова к выдаче','2023-01-01',NULL,3,9),(4,'2023-08-02','Клавиатура','Dark Project KD83A','Сломались некоторые клавиши','Новая заявка',NULL,NULL,NULL,8),(5,'2023-08-02','Ноутбук','ASUS ROG Strix G15 G513RW-HQ177 серый','Не загружается система','В процессе ремонта',NULL,'null',3,9),(8,'2024-05-24','sad','asdas','da','Новая заявка',NULL,'null',3,1);
+/*!40000 ALTER TABLE `Requests` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `Users`
+--
+
+DROP TABLE IF EXISTS `Users`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `Users` (
+  `userID` int NOT NULL AUTO_INCREMENT,
+  `fio` varchar(255) DEFAULT NULL,
+  `phone` varchar(11) DEFAULT NULL,
+  `login` varchar(50) DEFAULT NULL,
+  `password` varchar(255) DEFAULT NULL,
+  `type` varchar(50) DEFAULT NULL,
+  PRIMARY KEY (`userID`)
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `Users`
+--
+
+LOCK TABLES `Users` WRITE;
+/*!40000 ALTER TABLE `Users` DISABLE KEYS */;
+INSERT INTO `Users` VALUES (1,'Минаева Алиса Тимофеевна','89210563128','login1','pass1','Менеджер'),(2,'Воробьев Фёдор Алексеевич','89535078985','login2','pass2','Техник'),(3,'Захарова Алёна Андреевна','89210673849','login3','pass3','Техник'),(4,'Гусева Василиса Дмитриевна','89990563748','login4','pass4','Оператор'),(5,'Миронов Даниэль Львович','89994563847','login5','pass5','Оператор'),(6,'Белов Роман Добрынич','89219567849','login6','pass6','Заказчик'),(7,'Кузин Михаил Родионович','89219567841','login7','pass7','Заказчик'),(8,'Ковалева Софья Владимировна','89219567842','login8','pass8','Заказчик'),(9,'Глухова Вероника Владимировна','89219567843','login9','pass9','Заказчик'),(10,'Князев Арсений Андреевич','89219567844','login10','pass10','Техник');
+/*!40000 ALTER TABLE `Users` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -191,4 +170,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-05-23 15:48:17
+-- Dump completed on 2024-05-24 17:53:02

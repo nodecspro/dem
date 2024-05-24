@@ -4,10 +4,10 @@ import java.io.IOException;
 import java.net.URL;
 import java.sql.Connection;
 import java.sql.Date;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -44,17 +44,17 @@ public class MainFormController implements Initializable {
 	@FXML
 	private TableColumn<Request, Integer> requestIdColumn;
 	@FXML
-	private TableColumn<Request, Date> dateAddedColumn;
+	private TableColumn<Request, Date> startDateColumn;
 	@FXML
-	private TableColumn<Request, String> typeColumn;
+	private TableColumn<Request, String> computerTechTypeColumn;
 	@FXML
-	private TableColumn<Request, String> modelColumn;
+	private TableColumn<Request, String> computerTechModelColumn;
 	@FXML
 	private TableColumn<Request, String> problemColumn;
 	@FXML
-	private TableColumn<Request, String> clientFullName;
+	private TableColumn<Request, String> clientNameColumn;
 	@FXML
-	private TableColumn<Request, String> ClientNumber;
+	private TableColumn<Request, String> clientPhoneColumn;
 	@FXML
 	private TableColumn<Request, String> statusColumn;
 	@FXML
@@ -64,11 +64,11 @@ public class MainFormController implements Initializable {
 	@FXML
 	private Button addRequestButton;
 	@FXML
-	private ComboBox<String> RequestStatusComboBox;
+	private ComboBox<String> requestStatusComboBox;
 	@FXML
 	private TextArea problemTextArea;
 	@FXML
-	private ComboBox<String> workerComboBox;
+	private ComboBox<String> masterComboBox;
 	@FXML
 	private ComboBox<String> searchParametrComboBox;
 	@FXML
@@ -90,37 +90,44 @@ public class MainFormController implements Initializable {
 	@FXML
 	private Label statusRequestLabel;
 	@FXML
-	private Label workerLabel;
+	private Label masterLabel;
 
-	// Мапа для хранения ID работников по имени
-	private Map<String, Integer> workerIdMap = new HashMap<>();
+	// Мапа для хранения ID мастеров по имени
+	private Map<String, Integer> masterIdMap = new HashMap<>();
 
-	public void setUserRole(String userRole) {
-		// Проверка роли пользователя и скрытие кнопок при необходимости
-		if ("Пользователь".equals(userRole)) {
-			editRequestButton.setVisible(false);
-			deleteRequestButton.setVisible(false);
+	public Integer userid;
+
+	public void setUserID(String userID) {
+		try {
+			userid = Integer.parseInt(userID);
+		} catch (NumberFormatException e) {
+			e.printStackTrace();
+			userid = null;
 		}
+	}
+
+	public Integer getCurrentUserId() {
+		return userid;
 	}
 
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
 		// Установка значений для колонок
 		requestIdColumn.setCellValueFactory(new PropertyValueFactory<>("requestId"));
-		dateAddedColumn.setCellValueFactory(new PropertyValueFactory<>("dateAdded"));
-		typeColumn.setCellValueFactory(new PropertyValueFactory<>("typeName"));
-		modelColumn.setCellValueFactory(new PropertyValueFactory<>("modelName"));
+		startDateColumn.setCellValueFactory(new PropertyValueFactory<>("startDate"));
+		computerTechTypeColumn.setCellValueFactory(new PropertyValueFactory<>("computerTechType"));
+		computerTechModelColumn.setCellValueFactory(new PropertyValueFactory<>("computerTechModel"));
 		problemColumn.setCellValueFactory(new PropertyValueFactory<>("problemDescription"));
-		clientFullName.setCellValueFactory(new PropertyValueFactory<>("clientName"));
-		ClientNumber.setCellValueFactory(new PropertyValueFactory<>("phoneNumber"));
-		statusColumn.setCellValueFactory(new PropertyValueFactory<>("status"));
+		clientNameColumn.setCellValueFactory(new PropertyValueFactory<>("clientName"));
+		clientPhoneColumn.setCellValueFactory(new PropertyValueFactory<>("clientPhone"));
+		statusColumn.setCellValueFactory(new PropertyValueFactory<>("requestStatus"));
 
 		try {
 			// Загрузка данных из базы данных
 			loadRequests();
 
 			// Загрузка данных для ComboBox'ов
-			loadWorkers();
+			loadMasters();
 			loadRequestStatuses();
 			loadSearchParameters();
 			loadparameterStatistic();
@@ -157,36 +164,38 @@ public class MainFormController implements Initializable {
 		});
 	}
 
-	// Загрузка данных о работниках из базы данных
-	private void loadWorkers() throws SQLException {
+	// Загрузка данных о мастерах из базы данных
+	private void loadMasters() throws SQLException {
 		try (Connection connection = DatabaseHandler.getConnection();
 				Statement statement = connection.createStatement();
-				ResultSet resultSet = statement.executeQuery("SELECT worker_id, worker_name FROM workers")) {
+				ResultSet resultSet = statement.executeQuery(
+						"SELECT Masters.masterID, Users.fio AS masterName FROM Masters JOIN Users ON Masters.userID = Users.userID")) {
 
-			ObservableList<String> workers = FXCollections.observableArrayList();
+			ObservableList<String> masters = FXCollections.observableArrayList();
 			while (resultSet.next()) {
-				int workerId = resultSet.getInt("worker_id");
-				String workerName = resultSet.getString("worker_name");
-				workers.add(workerName);
-				workerIdMap.put(workerName, workerId);
+				int masterId = resultSet.getInt("masterID");
+				String masterName = resultSet.getString("masterName");
+				masters.add(masterName);
+				masterIdMap.put(masterName, masterId);
 			}
 
-			workerComboBox.getItems().clear();
-			workerComboBox.setItems(workers);
+			masterComboBox.getItems().clear();
+			masterComboBox.setItems(masters);
 		}
 	}
 
+	// Загрузка данных о заявках
 	public void loadRequests() throws SQLException {
-		List<Request> requestList = DatabaseHandler.getRequests();
-		ObservableList<Request> observableRequestList = FXCollections.observableArrayList(requestList);
+		List<Request> requests = DatabaseHandler.getRequests();
+		ObservableList<Request> observableRequestList = FXCollections.observableArrayList(requests);
 		requestTableView.setItems(observableRequestList);
 	}
 
 	// Загрузка данных о статусах заявок
 	private void loadRequestStatuses() {
 		ObservableList<String> statuses = FXCollections.observableArrayList("Новая заявка", "В процессе ремонта",
-				"Завершена");
-		RequestStatusComboBox.setItems(statuses);
+				"Готова к выдаче");
+		requestStatusComboBox.setItems(statuses);
 	}
 
 	// Загрузка данных для поиска
@@ -208,12 +217,12 @@ public class MainFormController implements Initializable {
 	private void showRequestDetails(Request request) {
 		if (request != null) {
 			problemTextArea.setText(request.getProblemDescription());
-			RequestStatusComboBox.setValue(request.getStatus());
-			commentTextArea.setText(request.getComments());
-			workerComboBox.setValue(request.getWorkerName());
+			requestStatusComboBox.setValue(request.getRequestStatus());
+			commentTextArea.setText(request.getRepairParts());
+			masterComboBox.setValue(request.getMasterName());
 		} else {
-			RequestStatusComboBox.setValue(null);
-			workerComboBox.setValue(null);
+			requestStatusComboBox.setValue(null);
+			masterComboBox.setValue(null);
 			problemTextArea.setText("");
 			commentTextArea.setText("");
 		}
@@ -222,34 +231,34 @@ public class MainFormController implements Initializable {
 	// Скрытие элементов управления для редактирования заявки
 	private void hideEditControls() {
 		problemTextArea.setVisible(false);
-		RequestStatusComboBox.setVisible(false);
+		requestStatusComboBox.setVisible(false);
 		commentTextArea.setVisible(false);
-		workerComboBox.setVisible(false);
+		masterComboBox.setVisible(false);
 		saveRequestButton.setVisible(false);
 		commentLabel.setVisible(false);
 		problemLabel.setVisible(false);
 		statusRequestLabel.setVisible(false);
-		workerLabel.setVisible(false);
+		masterLabel.setVisible(false);
 	}
 
 	// Показ элементов управления для редактирования заявки
 	private void showEditControls() {
 		problemTextArea.setVisible(true);
-		RequestStatusComboBox.setVisible(true);
+		requestStatusComboBox.setVisible(true);
 		commentTextArea.setVisible(true);
-		workerComboBox.setVisible(true);
+		masterComboBox.setVisible(true);
 		saveRequestButton.setVisible(true);
 		commentLabel.setVisible(true);
 		problemLabel.setVisible(true);
 		statusRequestLabel.setVisible(true);
-		workerLabel.setVisible(true);
+		masterLabel.setVisible(true);
 	}
 
 	// Удаление заявки из базы данных
 	private void deleteRequestFromDatabase(int requestId) throws SQLException {
 		try (Connection connection = DatabaseHandler.getConnection();
 				Statement statement = connection.createStatement()) {
-			String query = String.format("DELETE FROM requests WHERE request_id=%d", requestId);
+			String query = String.format("DELETE FROM Requests WHERE requestID=%d", requestId);
 			statement.executeUpdate(query);
 		}
 	}
@@ -265,9 +274,7 @@ public class MainFormController implements Initializable {
 
 		try {
 			deleteRequestFromDatabase(selectedRequest.getRequestId());
-			List<Request> requestList = DatabaseHandler.getRequests();
-			ObservableList<Request> observableRequestList = FXCollections.observableArrayList(requestList);
-			requestTableView.setItems(observableRequestList);
+			loadRequests();
 			showAlert("Успех", "Заявка успешно удалена.");
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -295,33 +302,10 @@ public class MainFormController implements Initializable {
 	private void updateRequestInDatabase(Request request) throws SQLException {
 		try (Connection connection = DatabaseHandler.getConnection();
 				Statement statement = connection.createStatement()) {
-
-			String query;
-			if ("Завершена".equals(request.getStatus())) {
-				String selectQuery = String.format("SELECT create_at FROM requests WHERE request_id=%d",
-						request.getRequestId());
-				try (ResultSet resultSet = statement.executeQuery(selectQuery)) {
-					if (resultSet.next()) {
-						Timestamp createAt = resultSet.getTimestamp("create_at");
-						Timestamp now = new Timestamp(System.currentTimeMillis());
-						long milliseconds = now.getTime() - createAt.getTime();
-						long hours = milliseconds / (1000 * 60 * 60);
-
-						query = String.format(
-								"UPDATE requests SET problem_description='%s', status='%s', comments='%s', worker_id=%d, completion_time='%d часов' WHERE request_id=%d",
-								request.getProblemDescription(), request.getStatus(), request.getComments(),
-								request.getWorkerId(), hours, request.getRequestId());
-					} else {
-						throw new SQLException("Request not found with id: " + request.getRequestId());
-					}
-				}
-			} else {
-				query = String.format(
-						"UPDATE requests SET problem_description='%s', status='%s', comments='%s', worker_id=%d WHERE request_id=%d",
-						request.getProblemDescription(), request.getStatus(), request.getComments(),
-						request.getWorkerId(), request.getRequestId());
-			}
-
+			String query = String.format(
+					"UPDATE Requests SET problemDescription='%s', requestStatus='%s', repairParts='%s', masterID=%d WHERE requestID=%d",
+					request.getProblemDescription(), request.getRequestStatus(), request.getRepairParts(),
+					request.getMasterId(), request.getRequestId());
 			statement.executeUpdate(query);
 		}
 	}
@@ -336,23 +320,21 @@ public class MainFormController implements Initializable {
 		}
 
 		selectedRequest.setProblemDescription(problemTextArea.getText());
-		selectedRequest.setStatus(RequestStatusComboBox.getValue());
-		selectedRequest.setComments(commentTextArea.getText());
-		String workerName = workerComboBox.getValue();
-		Integer workerId = workerIdMap.get(workerName);
+		selectedRequest.setRequestStatus(requestStatusComboBox.getValue());
+		selectedRequest.setRepairParts(commentTextArea.getText());
+		String masterName = masterComboBox.getValue();
+		Integer masterId = masterIdMap.get(masterName);
 
-		if (workerId != null) {
-			selectedRequest.setWorkerId(workerId);
+		if (masterId != null) {
+			selectedRequest.setMasterId(masterId);
 		} else {
-			showAlert("Ошибка", "Работник не найден.");
+			showAlert("Ошибка", "Мастер не найден.");
 			return;
 		}
 
 		try {
 			updateRequestInDatabase(selectedRequest);
-			List<Request> requestList = DatabaseHandler.getRequests();
-			ObservableList<Request> observableRequestList = FXCollections.observableArrayList(requestList);
-			requestTableView.setItems(observableRequestList);
+			loadRequests();
 			showAlert("Успех", "Заявка успешно обновлена.");
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -389,7 +371,7 @@ public class MainFormController implements Initializable {
 
 	// Обработчик события нажатия на кнопку "Поиск по заявке"
 	@FXML
-	public void searchRequestByParametrOnClick(MouseEvent event) {
+	public void searchRequestByParameterOnClick(MouseEvent event) {
 		String searchParameter = searchParametrComboBox.getValue();
 		String searchText = parametrTextField.getText();
 
@@ -407,91 +389,47 @@ public class MainFormController implements Initializable {
 		}
 	}
 
-	// Поиск заявок по параметру
 	private List<Request> searchRequests(String searchParameter, String searchText) throws SQLException {
 		List<Request> matchingRequests = new ArrayList<>();
+		PreparedStatement stmt;
+		ResultSet resultSet;
 
-		try (Connection connection = DatabaseHandler.getConnection();
-				Statement statement = connection.createStatement()) {
-
-			String query = "";
-			List<Integer> clientIds = new ArrayList<>();
+		try (Connection connection = DatabaseHandler.getConnection()) {
 			switch (searchParameter) {
 			case "Поиск по ID":
-				query = "SELECT * FROM requests WHERE request_id=" + searchText;
+				stmt = connection.prepareStatement("SELECT r.*, u.fio AS clientName, u.phone AS clientPhone "
+						+ "FROM Requests r " + "JOIN Clients c ON r.clientID = c.clientID "
+						+ "JOIN Users u ON c.userID = u.userID " + "WHERE r.requestID = ?");
+				stmt.setInt(1, Integer.parseInt(searchText));
+				resultSet = stmt.executeQuery();
+				matchingRequests = getRequestsFromResultSet(resultSet);
+				resultSet.close();
+				stmt.close();
 				break;
 			case "Поиск по клиенту":
-				query = "SELECT client_id FROM clients WHERE client_name LIKE '%" + searchText + "%'";
-				try (ResultSet resultSet = statement.executeQuery(query)) {
-					while (resultSet.next()) {
-						clientIds.add(resultSet.getInt("client_id"));
-					}
-				}
-				if (!clientIds.isEmpty()) {
-					String clientIdsString = clientIds.stream().map(String::valueOf).collect(Collectors.joining(","));
-					query = "SELECT * FROM requests WHERE client_id IN (" + clientIdsString + ")";
-				} else {
-					return matchingRequests;
-				}
-				break;
 			case "Поиск по телефону":
-				query = "SELECT client_id FROM clients WHERE phone_number LIKE '%" + searchText + "%'";
-				try (ResultSet resultSet = statement.executeQuery(query)) {
-					while (resultSet.next()) {
-						clientIds.add(resultSet.getInt("client_id"));
-					}
+				String field = searchParameter.equals("Поиск по клиенту") ? "fio" : "phone";
+				stmt = connection.prepareStatement("SELECT clientID FROM Clients "
+						+ "JOIN Users ON Clients.userID = Users.userID " + "WHERE Users." + field + " LIKE ?");
+				stmt.setString(1, "%" + searchText + "%");
+				resultSet = stmt.executeQuery();
+				List<Integer> clientIds = new ArrayList<>();
+				while (resultSet.next()) {
+					clientIds.add(resultSet.getInt("clientID"));
 				}
+				resultSet.close();
+				stmt.close();
 				if (!clientIds.isEmpty()) {
 					String clientIdsString = clientIds.stream().map(String::valueOf).collect(Collectors.joining(","));
-					query = "SELECT * FROM requests WHERE client_id IN (" + clientIdsString + ")";
-				} else {
-					return matchingRequests;
+					stmt = connection.prepareStatement("SELECT r.*, u.fio AS clientName, u.phone AS clientPhone "
+							+ "FROM Requests r " + "JOIN Clients c ON r.clientID = c.clientID "
+							+ "JOIN Users u ON c.userID = u.userID " + "WHERE r.clientID IN (" + clientIdsString + ")");
+					resultSet = stmt.executeQuery();
+					matchingRequests = getRequestsFromResultSet(resultSet);
+					resultSet.close();
+					stmt.close();
 				}
 				break;
-			default:
-				return matchingRequests;
-			}
-
-			try (ResultSet resultSet = statement.executeQuery(query)) {
-				while (resultSet.next()) {
-					Request request = new Request();
-					request.setRequestId(resultSet.getInt("request_id"));
-					request.setDateAdded(resultSet.getDate("date_added"));
-					request.setModelId(resultSet.getInt("model_id"));
-					request.setProblemDescription(resultSet.getString("problem_description"));
-					int clientId = resultSet.getInt("client_id");
-					try (Statement clientStatement = connection.createStatement();
-							ResultSet clientResultSet = clientStatement.executeQuery(
-									"SELECT client_name, phone_number FROM clients WHERE client_id=" + clientId)) {
-						if (clientResultSet.next()) {
-							request.setClientName(clientResultSet.getString("client_name"));
-							request.setPhoneNumber(clientResultSet.getString("phone_number"));
-						}
-					}
-					request.setWorkerId(resultSet.getInt("worker_id"));
-					request.setStatus(resultSet.getString("status"));
-					request.setComments(resultSet.getString("comments"));
-					request.setCompletionTime(resultSet.getString("completion_time"));
-					int modelId = resultSet.getInt("model_id");
-					try (Statement modelStatement = connection.createStatement();
-							ResultSet modelResultSet = modelStatement.executeQuery(
-									"SELECT model_name, equipment_type_id FROM equipment_models WHERE model_id="
-											+ modelId)) {
-						if (modelResultSet.next()) {
-							request.setModelName(modelResultSet.getString("model_name"));
-							int equipmentTypeId = modelResultSet.getInt("equipment_type_id");
-							try (Statement typeStatement = connection.createStatement();
-									ResultSet typeResultSet = typeStatement.executeQuery(
-											"SELECT type_name FROM equipment_types WHERE equipment_type_id="
-													+ equipmentTypeId)) {
-								if (typeResultSet.next()) {
-									request.setTypeName(typeResultSet.getString("type_name"));
-								}
-							}
-						}
-					}
-					matchingRequests.add(request);
-				}
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -500,9 +438,23 @@ public class MainFormController implements Initializable {
 		return matchingRequests;
 	}
 
+	private List<Request> getRequestsFromResultSet(ResultSet resultSet) throws SQLException {
+		List<Request> requests = new ArrayList<>();
+		while (resultSet.next()) {
+			Request request = new Request(resultSet.getInt("requestID"), resultSet.getDate("startDate"),
+					resultSet.getString("computerTechType"), resultSet.getString("computerTechModel"),
+					resultSet.getString("problemDescription"), resultSet.getInt("clientID"),
+					resultSet.getObject("masterID", Integer.class), resultSet.getString("requestStatus"),
+					resultSet.getString("repairParts"), resultSet.getDate("completionDate"), null,
+					resultSet.getString("clientName"), resultSet.getString("clientPhone"));
+			requests.add(request);
+		}
+		return requests;
+	}
+
 	// Отображение количества выполненных заявок
 	private void displayCompletedRequestsCount() {
-		String query = "SELECT COUNT(*) AS count FROM requests WHERE status = 'Завершена'";
+		String query = "SELECT COUNT(*) AS count FROM requests WHERE requestStatus = 'Готова к выдаче'";
 		try (Connection connection = DatabaseHandler.getConnection();
 				Statement statement = connection.createStatement();
 				ResultSet resultSet = statement.executeQuery(query)) {
@@ -519,31 +471,32 @@ public class MainFormController implements Initializable {
 
 	// Отображение среднего времени выполнения заявки
 	private void displayAverageCompletionTime() {
-		String query = "SELECT AVG(completion_time) AS average_time FROM requests WHERE status = 'Завершена'";
+		String query = "SELECT AVG(DATEDIFF(completionDate, startDate)) AS average_days FROM requests WHERE requestStatus = 'Готова к выдаче'";
 		try (Connection connection = DatabaseHandler.getConnection();
 				Statement statement = connection.createStatement();
 				ResultSet resultSet = statement.executeQuery(query)) {
 
 			if (resultSet.next()) {
-				double averageTime = resultSet.getDouble("average_time");
-				statisticTextArea.setText("Среднее время выполнения заявки = " + averageTime + " часов");
+				Integer averageDays = resultSet.getInt("average_days");
+				statisticTextArea.setText("Среднее время выполнения заявки = " + averageDays + " дней");
 			}
 
 		} catch (Exception e) {
 			e.printStackTrace();
+			statisticTextArea.setText("Ошибка при вычислении среднего времени выполнения заявок.");
 		}
 	}
 
 	// Отображение статистики по типам неисправности
 	private void displayProblemTypeStatistics() {
-		String query = "SELECT problem_description, COUNT(*) AS count FROM requests GROUP BY problem_description";
+		String query = "SELECT problemDescription, COUNT(*) AS count FROM requests GROUP BY problemDescription";
 		try (Connection connection = DatabaseHandler.getConnection();
 				Statement statement = connection.createStatement();
 				ResultSet resultSet = statement.executeQuery(query)) {
 
 			StringBuilder statistics = new StringBuilder();
 			while (resultSet.next()) {
-				String problemDescription = resultSet.getString("problem_description");
+				String problemDescription = resultSet.getString("problemDescription");
 				int count = resultSet.getInt("count");
 				statistics.append(problemDescription).append(": ").append(count).append("\n");
 			}

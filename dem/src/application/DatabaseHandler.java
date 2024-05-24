@@ -2,9 +2,9 @@ package application;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -13,68 +13,66 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
 public class DatabaseHandler {
-	private static final String URL = "jdbc:mysql://localhost:3306/dem";
+	private static final String URL = "jdbc:mysql://localhost:3306/24m115";
 	private static final String USER = "root";
 	private static final String PASSWORD = "";
+
+	private static final String REQUESTS_QUERY = "SELECT r.requestID, r.startDate, r.computerTechType, r.computerTechModel, "
+			+ "r.problemDescription, r.requestStatus, r.completionDate, r.repairParts, "
+			+ "r.masterID, r.clientID, u1.fio AS masterName, u2.fio AS clientName, u2.phone AS clientPhone "
+			+ "FROM Requests r " + "LEFT JOIN Masters m ON r.masterID = m.masterID "
+			+ "LEFT JOIN Users u1 ON m.userID = u1.userID " + "LEFT JOIN Clients c ON r.clientID = c.clientID "
+			+ "LEFT JOIN Users u2 ON c.userID = u2.userID";
+	private static final String EQUIPMENT_TYPES_QUERY = "SELECT DISTINCT computerTechType FROM Requests";
 
 	public static Connection getConnection() throws SQLException {
 		return DriverManager.getConnection(URL, USER, PASSWORD);
 	}
 
-	public static List<Request> getRequests() throws SQLException {
+	public static List<Request> getRequests() {
 		List<Request> requests = new ArrayList<>();
-
-		String query = "SELECT r.request_id, r.date_added, r.model_id, r.problem_description, r.client_id, r.worker_id, r.status, r.comments, r.create_at, r.completion_time, "
-				+ "m.model_name, e.type_name, c.client_name, c.phone_number, w.worker_name " + "FROM requests r "
-				+ "JOIN equipment_models m ON r.model_id = m.model_id "
-				+ "JOIN equipment_types e ON m.equipment_type_id = e.equipment_type_id "
-				+ "JOIN clients c ON r.client_id = c.client_id " + "LEFT JOIN workers w ON r.worker_id = w.worker_id";
-
 		try (Connection connection = getConnection();
-				Statement statement = connection.createStatement();
-				ResultSet resultSet = statement.executeQuery(query)) {
+				PreparedStatement statement = connection.prepareStatement(REQUESTS_QUERY);
+				ResultSet resultSet = statement.executeQuery()) {
 			while (resultSet.next()) {
-				int requestId = resultSet.getInt("request_id");
-				Date dateAdded = resultSet.getDate("date_added");
-				int modelId = resultSet.getInt("model_id");
-				String problemDescription = resultSet.getString("problem_description");
-				int clientId = resultSet.getInt("client_id");
-				Integer workerId = resultSet.getObject("worker_id", Integer.class); // worker_id может быть null
-				String status = resultSet.getString("status");
-				String comments = resultSet.getString("comments");
-				Date createdAt = resultSet.getTimestamp("create_at");
-				String completionTime = resultSet.getString("completion_time");
-
-				String modelName = resultSet.getString("model_name");
-				String typeName = resultSet.getString("type_name");
-				String clientName = resultSet.getString("client_name");
-				String phoneNumber = resultSet.getString("phone_number");
-				String workerName = resultSet.getString("worker_name");
-
-				requests.add(new Request(requestId, dateAdded, modelId, problemDescription, clientId, workerId, status,
-						comments, createdAt, completionTime, modelName, typeName, clientName, phoneNumber, workerName));
+				requests.add(mapToRequest(resultSet));
 			}
+		} catch (SQLException e) {
+			e.printStackTrace();
 		}
-
 		return requests;
+	}
+
+	private static Request mapToRequest(ResultSet resultSet) throws SQLException {
+		int requestId = resultSet.getInt("requestID");
+		Date startDate = resultSet.getDate("startDate");
+		String computerTechType = resultSet.getString("computerTechType");
+		String computerTechModel = resultSet.getString("computerTechModel");
+		String problemDescription = resultSet.getString("problemDescription");
+		String requestStatus = resultSet.getString("requestStatus");
+		Date completionDate = resultSet.getDate("completionDate");
+		String repairParts = resultSet.getString("repairParts");
+		Integer masterId = resultSet.getObject("masterID", Integer.class);
+		int clientId = resultSet.getInt("clientID");
+		String masterName = resultSet.getString("masterName");
+		String clientName = resultSet.getString("clientName");
+		String clientPhone = resultSet.getString("clientPhone");
+
+		return new Request(requestId, startDate, computerTechType, computerTechModel, problemDescription, clientId,
+				masterId, requestStatus, repairParts, completionDate, masterName, clientName, clientPhone);
 	}
 
 	public static ObservableList<String> getEquipmentTypes() {
 		ObservableList<String> equipmentTypes = FXCollections.observableArrayList();
-		String query = "SELECT type_name FROM equipment_types";
-
 		try (Connection connection = getConnection();
-				Statement statement = connection.createStatement();
-				ResultSet resultSet = statement.executeQuery(query)) {
-
+				PreparedStatement statement = connection.prepareStatement(EQUIPMENT_TYPES_QUERY);
+				ResultSet resultSet = statement.executeQuery()) {
 			while (resultSet.next()) {
-				equipmentTypes.add(resultSet.getString("type_name"));
+				equipmentTypes.add(resultSet.getString("computerTechType"));
 			}
-
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-
 		return equipmentTypes;
 	}
 }

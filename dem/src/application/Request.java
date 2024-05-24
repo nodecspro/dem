@@ -4,43 +4,40 @@ import java.util.Date;
 
 public class Request {
 	private int requestId;
-	private Date dateAdded;
-	private int modelId;
+	private Date startDate;
+	private String computerTechType;
+	private String computerTechModel;
 	private String problemDescription;
 	private int clientId;
-	private Integer workerId;
-	private String status;
-	private String comments;
-	private Date createdAt;
-	private String completionTime;
-	private String modelName;
-	private String typeName;
+	private Integer masterId;
+	private String requestStatus;
+	private String repairParts;
+	private Date completionDate;
+	
+	private String masterName;
 	private String clientName;
-	private String phoneNumber;
-	private String workerName;
+	private String clientPhone;
 
 	public Request() {
 		super();
 	}
 
-	public Request(int requestId, Date dateAdded, int modelId, String problemDescription, int clientId,
-			Integer workerId, String status, String comments, Date createdAt, String completionTime, String modelName,
-			String typeName, String clientName, String phoneNumber, String workerName) {
+	public Request(int requestId, Date startDate, String computerTechType, String computerTechModel,
+			String problemDescription, int clientId, Integer masterId, String requestStatus, String repairParts,
+			Date completionDate, String masterName, String clientName, String clientPhone) {
 		this.requestId = requestId;
-		this.dateAdded = dateAdded;
-		this.modelId = modelId;
+		this.startDate = startDate;
+		this.computerTechType = computerTechType;
+		this.computerTechModel = computerTechModel;
 		this.problemDescription = problemDescription;
 		this.clientId = clientId;
-		this.workerId = workerId;
-		this.status = status;
-		this.comments = comments;
-		this.createdAt = createdAt;
-		this.completionTime = completionTime;
-		this.modelName = modelName;
-		this.typeName = typeName;
+		this.masterId = masterId;
+		this.requestStatus = requestStatus;
+		this.repairParts = repairParts;
+		this.completionDate = completionDate;
+		this.masterName = masterName;
 		this.clientName = clientName;
-		this.phoneNumber = phoneNumber;
-		this.workerName = workerName;
+		this.clientPhone = clientPhone;
 	}
 
 	// Getters and setters for all fields
@@ -53,20 +50,28 @@ public class Request {
 		this.requestId = requestId;
 	}
 
-	public Date getDateAdded() {
-		return dateAdded;
+	public Date getStartDate() {
+		return startDate;
 	}
 
-	public void setDateAdded(Date dateAdded) {
-		this.dateAdded = dateAdded;
+	public void setStartDate(Date startDate) {
+		this.startDate = startDate;
 	}
 
-	public int getModelId() {
-		return modelId;
+	public String getComputerTechType() {
+		return computerTechType;
 	}
 
-	public void setModelId(int modelId) {
-		this.modelId = modelId;
+	public void setComputerTechType(String computerTechType) {
+		this.computerTechType = computerTechType;
+	}
+
+	public String getComputerTechModel() {
+		return computerTechModel;
+	}
+
+	public void setComputerTechModel(String computerTechModel) {
+		this.computerTechModel = computerTechModel;
 	}
 
 	public String getProblemDescription() {
@@ -85,60 +90,44 @@ public class Request {
 		this.clientId = clientId;
 	}
 
-	public Integer getWorkerId() {
-		return workerId;
+	public Integer getMasterId() {
+		return masterId;
 	}
 
-	public void setWorkerId(Integer workerId) {
-		this.workerId = workerId;
+	public void setMasterId(Integer masterId) {
+		this.masterId = masterId;
 	}
 
-	public String getStatus() {
-		return status;
+	public String getRequestStatus() {
+		return requestStatus;
 	}
 
-	public void setStatus(String status) {
-		this.status = status;
+	public void setRequestStatus(String requestStatus) {
+		this.requestStatus = requestStatus;
 	}
 
-	public String getComments() {
-		return comments;
+	public String getRepairParts() {
+		return repairParts;
 	}
 
-	public void setComments(String comments) {
-		this.comments = comments;
+	public void setRepairParts(String repairParts) {
+		this.repairParts = repairParts;
 	}
 
-	public Date getCreatedAt() {
-		return createdAt;
+	public Date getCompletionDate() {
+		return completionDate;
 	}
 
-	public void setCreatedAt(Date createdAt) {
-		this.createdAt = createdAt;
+	public void setCompletionDate(Date completionDate) {
+		this.completionDate = completionDate;
 	}
 
-	public String getCompletionTime() {
-		return completionTime;
+	public String getMasterName() {
+		return masterName;
 	}
 
-	public void setCompletionTime(String completionTime) {
-		this.completionTime = completionTime;
-	}
-
-	public String getModelName() {
-		return modelName;
-	}
-
-	public void setModelName(String modelName) {
-		this.modelName = modelName;
-	}
-
-	public String getTypeName() {
-		return typeName;
-	}
-
-	public void setTypeName(String typeName) {
-		this.typeName = typeName;
+	public void setMasterName(String masterName) {
+		this.masterName = masterName;
 	}
 
 	public String getClientName() {
@@ -149,29 +138,21 @@ public class Request {
 		this.clientName = clientName;
 	}
 
-	public String getPhoneNumber() {
-		return phoneNumber;
+	public String getClientPhone() {
+		return clientPhone;
 	}
 
-	public void setPhoneNumber(String phoneNumber) {
-		this.phoneNumber = phoneNumber;
-	}
-
-	public String getWorkerName() {
-		return workerName;
-	}
-
-	public void setWorkerName(String workerName) {
-		this.workerName = workerName;
+	public void setClientPhone(String clientPhone) {
+		this.clientPhone = clientPhone;
 	}
 
 	@Override
 	public String toString() {
-		return "Request{" + "requestId=" + requestId + ", dateAdded=" + dateAdded + ", modelId=" + modelId
-				+ ", problemDescription='" + problemDescription + '\'' + ", clientId=" + clientId + ", workerId="
-				+ workerId + ", status='" + status + '\'' + ", comments='" + comments + '\'' + ", createdAt="
-				+ createdAt + ", completionTime='" + completionTime + '\'' + ", modelName='" + modelName + '\''
-				+ ", typeName='" + typeName + '\'' + ", clientName='" + clientName + '\'' + ", phoneNumber='"
-				+ phoneNumber + '\'' + ", workerName='" + workerName + '\'' + '}';
+		return "Request{" + "requestId=" + requestId + ", startDate=" + startDate + ", computerTechType='"
+				+ computerTechType + '\'' + ", computerTechModel='" + computerTechModel + '\''
+				+ ", problemDescription='" + problemDescription + '\'' + ", clientId=" + clientId + ", masterId="
+				+ masterId + ", requestStatus='" + requestStatus + '\'' + ", repairParts='" + repairParts + '\''
+				+ ", completionDate=" + completionDate + ", masterName='" + masterName + '\'' + ", clientName='"
+				+ clientName + '\'' + ", clientPhone='" + clientPhone + '\'' + '}';
 	}
 }

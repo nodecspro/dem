@@ -1,6 +1,6 @@
 -- MySQL dump 10.13  Distrib 8.0.26, for Win64 (x86_64)
 --
--- Host: 127.0.0.1    Database: dem
+-- Host: 127.0.0.1    Database: 24m115
 -- ------------------------------------------------------
 -- Server version	8.0.30
 
@@ -16,110 +16,99 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `clients`
+-- Table structure for table `Clients`
 --
 
-DROP TABLE IF EXISTS `clients`;
+DROP TABLE IF EXISTS `Clients`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `clients` (
-  `client_id` int NOT NULL AUTO_INCREMENT,
-  `client_name` varchar(100) NOT NULL,
-  `phone_number` varchar(20) NOT NULL,
-  PRIMARY KEY (`client_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+CREATE TABLE `Clients` (
+  `clientID` int NOT NULL AUTO_INCREMENT,
+  `userID` int DEFAULT NULL,
+  PRIMARY KEY (`clientID`),
+  KEY `userID` (`userID`),
+  CONSTRAINT `clients_ibfk_1` FOREIGN KEY (`userID`) REFERENCES `Users` (`userID`)
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Table structure for table `equipment_models`
+-- Table structure for table `Comments`
 --
 
-DROP TABLE IF EXISTS `equipment_models`;
+DROP TABLE IF EXISTS `Comments`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `equipment_models` (
-  `model_id` int NOT NULL AUTO_INCREMENT,
-  `model_name` varchar(100) NOT NULL,
-  `equipment_type_id` int NOT NULL,
-  PRIMARY KEY (`model_id`),
-  KEY `equipment_type_id` (`equipment_type_id`),
-  CONSTRAINT `equipment_models_ibfk_1` FOREIGN KEY (`equipment_type_id`) REFERENCES `equipment_types` (`equipment_type_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+CREATE TABLE `Comments` (
+  `commentID` int NOT NULL AUTO_INCREMENT,
+  `message` varchar(255) DEFAULT NULL,
+  `masterID` int DEFAULT NULL,
+  `requestID` int DEFAULT NULL,
+  PRIMARY KEY (`commentID`),
+  KEY `masterID` (`masterID`),
+  KEY `requestID` (`requestID`),
+  CONSTRAINT `comments_ibfk_1` FOREIGN KEY (`masterID`) REFERENCES `Masters` (`masterID`),
+  CONSTRAINT `comments_ibfk_2` FOREIGN KEY (`requestID`) REFERENCES `Requests` (`requestID`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Table structure for table `equipment_types`
+-- Table structure for table `Masters`
 --
 
-DROP TABLE IF EXISTS `equipment_types`;
+DROP TABLE IF EXISTS `Masters`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `equipment_types` (
-  `equipment_type_id` int NOT NULL AUTO_INCREMENT,
-  `type_name` varchar(100) NOT NULL,
-  PRIMARY KEY (`equipment_type_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+CREATE TABLE `Masters` (
+  `masterID` int NOT NULL AUTO_INCREMENT,
+  `userID` int DEFAULT NULL,
+  PRIMARY KEY (`masterID`),
+  KEY `userID` (`userID`),
+  CONSTRAINT `masters_ibfk_1` FOREIGN KEY (`userID`) REFERENCES `Users` (`userID`)
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Table structure for table `requests`
+-- Table structure for table `Requests`
 --
 
-DROP TABLE IF EXISTS `requests`;
+DROP TABLE IF EXISTS `Requests`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `requests` (
-  `request_id` int NOT NULL AUTO_INCREMENT,
-  `date_added` date NOT NULL,
-  `model_id` int NOT NULL,
-  `problem_description` text NOT NULL,
-  `client_id` int NOT NULL,
-  `worker_id` int DEFAULT NULL,
-  `status` enum('Новая заявка','В процессе ремонта','Завершена') NOT NULL DEFAULT 'Новая заявка',
-  `comments` text,
-  `create_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-  `completion_time` varchar(50) DEFAULT NULL,
-  PRIMARY KEY (`request_id`),
-  UNIQUE KEY `request_id_UNIQUE` (`request_id`),
-  KEY `model_id` (`model_id`),
-  KEY `client_id` (`client_id`),
-  KEY `worker_id` (`worker_id`),
-  CONSTRAINT `requests_ibfk_1` FOREIGN KEY (`model_id`) REFERENCES `equipment_models` (`model_id`),
-  CONSTRAINT `requests_ibfk_2` FOREIGN KEY (`client_id`) REFERENCES `clients` (`client_id`),
-  CONSTRAINT `requests_ibfk_3` FOREIGN KEY (`worker_id`) REFERENCES `workers` (`worker_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+CREATE TABLE `Requests` (
+  `requestID` int NOT NULL AUTO_INCREMENT,
+  `startDate` date DEFAULT NULL,
+  `computerTechType` varchar(100) DEFAULT NULL,
+  `computerTechModel` varchar(100) DEFAULT NULL,
+  `problemDescription` varchar(255) DEFAULT NULL,
+  `requestStatus` varchar(50) DEFAULT 'Новая заявка',
+  `completionDate` date DEFAULT NULL,
+  `repairParts` varchar(255) DEFAULT NULL,
+  `masterID` int DEFAULT NULL,
+  `clientID` int DEFAULT NULL,
+  PRIMARY KEY (`requestID`),
+  KEY `masterID` (`masterID`),
+  KEY `clientID` (`clientID`),
+  CONSTRAINT `requests_ibfk_1` FOREIGN KEY (`masterID`) REFERENCES `Masters` (`masterID`),
+  CONSTRAINT `requests_ibfk_2` FOREIGN KEY (`clientID`) REFERENCES `Clients` (`clientID`)
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Table structure for table `user`
+-- Table structure for table `Users`
 --
 
-DROP TABLE IF EXISTS `user`;
+DROP TABLE IF EXISTS `Users`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `user` (
-  `username` varchar(16) NOT NULL,
-  `password` varchar(32) NOT NULL,
-  `role` enum('Администратор','Пользователь') NOT NULL DEFAULT 'Пользователь',
-  `create_time` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`username`),
-  UNIQUE KEY `username_UNIQUE` (`username`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `workers`
---
-
-DROP TABLE IF EXISTS `workers`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `workers` (
-  `worker_id` int NOT NULL AUTO_INCREMENT,
-  `worker_name` varchar(100) NOT NULL,
-  `position` varchar(100) DEFAULT NULL,
-  PRIMARY KEY (`worker_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+CREATE TABLE `Users` (
+  `userID` int NOT NULL AUTO_INCREMENT,
+  `fio` varchar(255) DEFAULT NULL,
+  `phone` varchar(11) DEFAULT NULL,
+  `login` varchar(50) DEFAULT NULL,
+  `password` varchar(255) DEFAULT NULL,
+  `type` varchar(50) DEFAULT NULL,
+  PRIMARY KEY (`userID`)
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -131,4 +120,4 @@ CREATE TABLE `workers` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-05-23 15:46:21
+-- Dump completed on 2024-05-24 17:53:10

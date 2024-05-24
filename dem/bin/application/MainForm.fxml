@@ -10,41 +10,78 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.Pane?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="884.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.MainFormController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity"
+	minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0"
+	prefWidth="884.0" xmlns="http://javafx.com/javafx/21"
+	xmlns:fx="http://javafx.com/fxml/1"
+	fx:controller="application.MainFormController">
 	<center>
 		<Pane BorderPane.alignment="CENTER">
 			<children>
-				<TableView fx:id="requestTableView" prefHeight="200.0" prefWidth="884.0">
+				<TableView fx:id="requestTableView" prefHeight="200.0"
+					prefWidth="884.0">
 					<columns>
-						<TableColumn fx:id="requestIdColumn" editable="false" prefWidth="75.0" text="Номер заявки" />
-						<TableColumn fx:id="dateAddedColumn" editable="false" prefWidth="75.0" text="Дата добавления" />
-						<TableColumn fx:id="typeColumn" editable="false" prefWidth="75.0" text="Вид оргтехники" />
-						<TableColumn fx:id="modelColumn" editable="false" prefWidth="92.0" text="Модель" />
-						<TableColumn fx:id="problemColumn" editable="false" prefWidth="134.0" text="Описание проблемы" />
-						<TableColumn fx:id="clientFullName" editable="false" prefWidth="182.0" text="Клиент" />
-						<TableColumn fx:id="ClientNumber" editable="false" prefWidth="137.0" text="Телефон" />
-						<TableColumn fx:id="statusColumn" editable="false" prefWidth="113.0" text="Статус" />
+						<TableColumn fx:id="requestIdColumn" editable="false"
+							prefWidth="75.0" text="Номер заявки" />
+						<TableColumn fx:id="startDateColumn" editable="false"
+							prefWidth="75.0" text="Дата добавления" />
+						<TableColumn fx:id="computerTechTypeColumn"
+							editable="false" prefWidth="75.0" text="Вид оргтехники" />
+						<TableColumn fx:id="computerTechModelColumn"
+							editable="false" prefWidth="92.0" text="Модель" />
+						<TableColumn fx:id="problemColumn" editable="false"
+							prefWidth="134.0" text="Описание проблемы" />
+						<TableColumn fx:id="clientNameColumn" editable="false"
+							prefWidth="182.0" text="Клиент" />
+						<TableColumn fx:id="clientPhoneColumn"
+							editable="false" prefWidth="137.0" text="Телефон" />
+						<TableColumn fx:id="statusColumn" editable="false"
+							prefWidth="113.0" text="Статус" />
 					</columns>
 				</TableView>
-				<Button fx:id="deleteRequestButton" layoutX="393.0" layoutY="367.0" mnemonicParsing="false" onMouseClicked="#deleteRequestButtonOnClick" text="Удалить заявку" />
-				<Button fx:id="editRequestButton" layoutX="387.0" layoutY="303.0" mnemonicParsing="false" onMouseClicked="#editRequestButtonOnClick" text="Изменить заявку" />
-				<Button fx:id="addRequestButton" layoutX="388.0" layoutY="239.0" mnemonicParsing="false" onMouseClicked="#addRequestButtonOnClick" text="Добавить заявку" />
+				<Button fx:id="deleteRequestButton" layoutX="393.0"
+					layoutY="367.0" mnemonicParsing="false"
+					onMouseClicked="#deleteRequestButtonOnClick" text="Удалить заявку" />
+				<Button fx:id="editRequestButton" layoutX="387.0"
+					layoutY="303.0" mnemonicParsing="false"
+					onMouseClicked="#editRequestButtonOnClick" text="Изменить заявку" />
+				<Button fx:id="addRequestButton" layoutX="388.0"
+					layoutY="239.0" mnemonicParsing="false"
+					onMouseClicked="#addRequestButtonOnClick" text="Добавить заявку" />
 				<Label layoutX="691.0" layoutY="401.0" text="Статистика" />
-				<Label fx:id="statusRequestLabel" layoutX="134.0" layoutY="208.0" text="Статус заявки" />
-				<ComboBox fx:id="RequestStatusComboBox" layoutX="96.0" layoutY="225.0" prefWidth="150.0" promptText="Статус заявки" />
-				<TextArea fx:id="problemTextArea" layoutX="79.0" layoutY="354.0" prefHeight="75.0" prefWidth="185.0" wrapText="true" />
-				<Label fx:id="problemLabel" layoutX="113.0" layoutY="335.0" text="Описание проблемы" />
-				<ComboBox fx:id="workerComboBox" layoutX="96.0" layoutY="290.0" prefWidth="150.0" promptText="Работник" />
-				<Label fx:id="workerLabel" layoutX="64.0" layoutY="272.0" text="Ответственный за выполнение работы" />
+				<Label fx:id="statusRequestLabel" layoutX="134.0"
+					layoutY="208.0" text="Статус заявки" />
+				<ComboBox fx:id="requestStatusComboBox" layoutX="96.0"
+					layoutY="225.0" prefWidth="150.0" promptText="Статус заявки" />
+				<TextArea fx:id="problemTextArea" layoutX="79.0"
+					layoutY="354.0" prefHeight="75.0" prefWidth="185.0" wrapText="true" />
+				<Label fx:id="problemLabel" layoutX="113.0" layoutY="335.0"
+					text="Описание проблемы" />
+				<ComboBox fx:id="masterComboBox" layoutX="96.0"
+					layoutY="290.0" prefWidth="150.0" promptText="Работник" />
+				<Label fx:id="masterLabel" layoutX="64.0" layoutY="272.0"
+					text="Ответственный за выполнение работы" />
 				<Label layoutX="685.0" layoutY="229.0" text="Найти заявку" />
-				<ComboBox fx:id="searchParametrComboBox" layoutX="646.0" layoutY="251.0" prefWidth="150.0" promptText="Параметр поиска" />
-				<TextField fx:id="parametrTextField" layoutX="647.0" layoutY="303.0" />
-				<Button fx:id="searchRequestByParametr" layoutX="677.0" layoutY="342.0" mnemonicParsing="false" onMouseClicked="#searchRequestByParametrOnClick" text="Найти заявку" />
-				<TextArea fx:id="commentTextArea" layoutX="78.0" layoutY="463.0" prefHeight="75.0" prefWidth="185.0" wrapText="true" />
-				<Label fx:id="commentLabel" layoutX="133.0" layoutY="446.0" text="Комментарий" />
-				<ComboBox fx:id="parameterStatisticComboBox" layoutX="646.0" layoutY="429.0" prefWidth="150.0" promptText="Параметр" />
-				<TextArea fx:id="statisticTextArea" layoutX="629.0" layoutY="477.0" prefHeight="75.0" prefWidth="185.0" wrapText="true" />
-				<Button fx:id="saveRequestButton" layoutX="134.0" layoutY="552.0" mnemonicParsing="false" onMouseClicked="#saveRequestButtonOnClick" text="Сохранить" />
+				<ComboBox fx:id="searchParametrComboBox" layoutX="646.0"
+					layoutY="251.0" prefWidth="150.0" promptText="Параметр поиска" />
+				<TextField fx:id="parametrTextField" layoutX="647.0"
+					layoutY="303.0" />
+				<Button fx:id="searchRequestByParametr" layoutX="677.0"
+					layoutY="342.0" mnemonicParsing="false"
+					onMouseClicked="#searchRequestByParameterOnClick"
+					text="Найти заявку" />
+				<TextArea fx:id="commentTextArea" layoutX="78.0"
+					layoutY="463.0" prefHeight="75.0" prefWidth="185.0" wrapText="true" />
+				<Label fx:id="commentLabel" layoutX="133.0" layoutY="446.0"
+					text="Комментарий" />
+				<ComboBox fx:id="parameterStatisticComboBox"
+					layoutX="646.0" layoutY="429.0" prefWidth="150.0"
+					promptText="Параметр" />
+				<TextArea fx:id="statisticTextArea" layoutX="629.0"
+					layoutY="477.0" prefHeight="75.0" prefWidth="185.0" wrapText="true" />
+				<Button fx:id="saveRequestButton" layoutX="134.0"
+					layoutY="552.0" mnemonicParsing="false"
+					onMouseClicked="#saveRequestButtonOnClick" text="Сохранить" />
 			</children>
 		</Pane>
 	</center>
